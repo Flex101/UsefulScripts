@@ -358,16 +358,33 @@ function commitDirty()
 	
 	for DIR in ${DIRTY[@]}; do
 		print -l 2 $DIR...
+		done=false
 		
-		print -l 3 "Would you like to use git cola (c), terminal (t), or skip (s) ? " -n
-		read selection
-		print
+		while [ $done = false ]; do
+			print -l 3 "Would you like to use git cola (c), terminal (t), or skip (s) ? " -n
+			read selection
+			
+			case $selection in
+				c)
+					git cola -r $START_DIR/$DIR
+					;;
+				t)
+					konsole --workdir $START_DIR/$DIR
+					;;
+				s)
+					print -l 3 -c $YELLOW_TXT "Skipped"
+					break
+					;;
+			esac
 		
-		case $selection in
-			c)
-				git cola -r $START_DIR/$DIR
-				;;
-		esac
+			diff="$(git diff)"
+			diff_staged="$(git diff --staged)"
+			if [ "$diff" != "" ] || [ "$diff_staged" != "" ]; then
+				print -l 3 -c $RED_TXT "Repo is still dirty"
+			else
+				done=true
+			fi
+		done
 	done
 }
 
