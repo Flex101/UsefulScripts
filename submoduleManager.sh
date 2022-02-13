@@ -377,11 +377,12 @@ function commitDirty()
 					;;
 			esac
 		
-			diff="$(git diff)"
-			diff_staged="$(git diff --staged)"
+			diff="$(git -C $START_DIR/$DIR diff)"
+			diff_staged="$(git -C $START_DIR/$DIR diff --staged)"
 			if [ "$diff" != "" ] || [ "$diff_staged" != "" ]; then
 				print -l 3 -c $RED_TXT "Repo is still dirty"
 			else
+				print -l 3 -c $GREEN_TXT "Repo is clean"
 				done=true
 			fi
 		done
